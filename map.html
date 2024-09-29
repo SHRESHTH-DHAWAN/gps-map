@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Location</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
+        h2 { text-align: center; }
+        #map { height: 400px; width: 100%; }
+        #coordinates { text-align: center; margin: 10px; }
+    </style>
+</head>
+<body>
+    <h2>Select Your Location</h2>
+    <div id="map"></div>
+    <div id="coordinates">Coordinates: <span id="latlng">Fetching your location...</span></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([20.5937, 78.9629], 5); // Set a default view over India
+
+        // Set up OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Function to get the user's current location
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var lat = position.coords.latitude;
+                    var lon = position.coords.longitude;
+
+                    // Move map to the user's location
+                    map.setView([lat, lon], 13);
+
+                    // Add a marker at the user's location
+                    var marker = L.marker([lat, lon]).addTo(map)
+                        .bindPopup("You are here: " + lat.toFixed(5) + ", " + lon.toFixed(5))
+                        .openPopup();
+
+                    // Display coordinates
+                    document.getElementById('latlng').textContent = lat.toFixed(5) + ", " + lon.toFixed(5);
+                }, function() {
+                    alert("Geolocation service failed. Please allow location access.");
+                });
+            } else {
+                alert("Your browser doesn't support geolocation.");
+            }
+        }
+
+        // Call the function to get the user's location
+        getLocation();
+    </script>
+</body>
+</html>
